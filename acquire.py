@@ -20,11 +20,39 @@ from env import github_token, github_username
 # TODO: Add your github username to your env.py file under the variable `github_username`
 # TODO: Add more repositories to the `REPOS` list below.
 
-REPOS = [
-    "gocodeup/codeup-setup-script",
-    "gocodeup/movies-application",
-    "torvalds/linux",
-]
+###################################################################################################
+
+# Check if repo csv exists
+if not os.path.isfile("repo.csv"):
+    
+    lang_list = ['JavaScript', 'Python', 'Java','PHP']
+
+    repos = []
+
+    for lang in lang_list:
+        for i in range(1, 4):
+            url = f'https://github.com/search?l={lang}&p={i}&q=stars%3A>0&s=stars&type=Repositories'
+            response = get(url)
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            for element in soup.find_all('a', class_='v-align-middle'):
+                repos.append(element.text)
+
+            time.sleep(10)
+
+    with open('repo.csv', 'w') as createfile:
+        wr = csv.writer(createfile, quoting=csv.QUOTE_ALL)
+        wr.writerow(repos)
+        
+####################################################################################################
+        
+results = []
+with open('repo.csv', newline='') as inputfile:
+    results = list(csv.reader(inputfile))
+                
+REPOS = [item for sublist in results for item in sublist]
+
+####################################################################################################
 
 headers = {"Authorization": f"token {github_token}", "User-Agent": github_username}
 
