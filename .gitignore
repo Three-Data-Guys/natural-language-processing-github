@@ -5,6 +5,7 @@ __pycache__/
 *.csv
 env.py
 *.xlsx
+*.json
 acquire_testing.ipynb
 prepare_testing.ipynb
 explore_testing.ipynb
