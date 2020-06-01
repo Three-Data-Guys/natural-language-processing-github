@@ -5,3 +5,7 @@ __pycache__/
 *.csv
 env.py
 *.xlsx
+acquire_testing.ipynb
+prepare_testing.ipynb
+explore_testing.ipynb
+model_testing.ipynb
