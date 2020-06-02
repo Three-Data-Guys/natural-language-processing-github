@@ -48,7 +48,9 @@ def prepare_readme_data(df, column):
     clean_tokens = df[column].apply(basic_clean).apply(tokenize)
     df['stemmed'] = clean_tokens.apply(stem)
     df['lemmatized'] = clean_tokens.apply(lemmatize)
-    df['clean'] = clean_tokens.apply(remove_stopwords)
+    df['clean'] = df.stemmed.apply(remove_stopwords)
+    df['clean_lemmatized'] = df.stemmed.apply(remove_stopwords)
+    df['clean_stemmed'] = df.lemmatized.apply(remove_stopwords)
     return df
 
 def wrangle_data():
