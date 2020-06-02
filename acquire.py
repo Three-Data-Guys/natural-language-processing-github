@@ -116,7 +116,11 @@ def process_repo(repo: str) -> Dict[str, str]:
     dictionary with the language of the repo and the readme contents.
     """
     contents = get_repo_contents(repo)
-    readme_contents = requests.get(get_readme_download_url(contents)).text
+    readme_download_url = get_readme_download_url(contents)
+    if readme_download_url == "":
+        readme_contents = None
+    else:
+        readme_contents = requests.get(readme_download_url).text
     return {
         "repo": repo,
         "language": get_repo_language(repo),
