@@ -17,6 +17,13 @@ def basic_clean(string):
     string = re.sub(r"[^a-z0-9'\s]", '', string)
     return string
 
+def clean_html(string):
+    string = re.sub(r'<[^>]*>', '', string)
+    string = re.sub(r"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)", '', string)
+    string = re.sub(r'\n', '', string)
+    string = re.sub(r'\s\s', '', string)
+    return string
+
 def tokenize(string):
     tokenizer = nltk.tokenize.ToktokTokenizer()
     return tokenizer.tokenize(string, return_str=True)
@@ -45,12 +52,17 @@ def remove_stopwords(string, extra_words=[], exclude_words=[]):
     return ' '.join(filtered_words)
 
 def prepare_readme_data(df, column):
-    clean_tokens = df[column].apply(basic_clean).apply(tokenize)
+    clean_tokens = (df[column].apply(clean_html)
+                              .apply(basic_clean)
+                              .apply(tokenize)
+                              .apply(remove_stopwords)
+                   )
+    
+    for token in clean_tokens:
+        token = ' '.join(token).split()
+    
     df['stemmed'] = clean_tokens.apply(stem)
     df['lemmatized'] = clean_tokens.apply(lemmatize)
-    df['clean'] = df.stemmed.apply(remove_stopwords)
-    df['clean_lemmatized'] = df.stemmed.apply(remove_stopwords)
-    df['clean_stemmed'] = df.lemmatized.apply(remove_stopwords)
     return df
 
 def wrangle_data():
