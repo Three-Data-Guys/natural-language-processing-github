@@ -34,7 +34,7 @@ if not os.path.isfile("repo.csv"):
     repos = []
 
     for lang in lang_list:
-        for i in range(1, 4):
+        for i in range(1, 21):
             url = f'https://github.com/search?l={lang}&p={i}&q=stars%3A>0&s=stars&type=Repositories'
             response = requests.get(url)
             soup = BeautifulSoup(response.content, 'html.parser')
@@ -116,7 +116,11 @@ def process_repo(repo: str) -> Dict[str, str]:
     dictionary with the language of the repo and the readme contents.
     """
     contents = get_repo_contents(repo)
-    readme_contents = requests.get(get_readme_download_url(contents)).text
+    readme_download_url = get_readme_download_url(contents)
+    if readme_download_url == "":
+        readme_contents = None
+    else:
+        readme_contents = requests.get(readme_download_url).text
     return {
         "repo": repo,
         "language": get_repo_language(repo),
