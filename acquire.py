@@ -7,9 +7,13 @@ After doing so, run it like this:
 To create the `data.json` file that contains the data.
 """
 import os
+import time
+import csv
 import json
 from typing import Dict, List, Optional, Union, cast
 import requests
+
+from bs4 import BeautifulSoup
 
 from env import github_token, github_username
 
@@ -20,7 +24,7 @@ from env import github_token, github_username
 # TODO: Add your github username to your env.py file under the variable `github_username`
 # TODO: Add more repositories to the `REPOS` list below.
 
-###################################################################################################
+#####################################################################################################
 
 # Check if repo csv exists
 if not os.path.isfile("repo.csv"):
@@ -32,7 +36,7 @@ if not os.path.isfile("repo.csv"):
     for lang in lang_list:
         for i in range(1, 4):
             url = f'https://github.com/search?l={lang}&p={i}&q=stars%3A>0&s=stars&type=Repositories'
-            response = get(url)
+            response = requests.get(url)
             soup = BeautifulSoup(response.content, 'html.parser')
 
             for element in soup.find_all('a', class_='v-align-middle'):
