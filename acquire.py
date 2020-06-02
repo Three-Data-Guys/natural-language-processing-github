@@ -34,7 +34,7 @@ if not os.path.isfile("repo.csv"):
     repos = []
 
     for lang in lang_list:
-        for i in range(1, 4):
+        for i in range(1, 21):
             url = f'https://github.com/search?l={lang}&p={i}&q=stars%3A>0&s=stars&type=Repositories'
             response = requests.get(url)
             soup = BeautifulSoup(response.content, 'html.parser')
