@@ -10,7 +10,10 @@ import nltk
 
 import re
 
+
 from wordcloud import WordCloud
+
+df = prepare.wrangle_data()
 
 
 def make_word_list(df):
@@ -127,6 +130,9 @@ def viz_most_common(word_counts):
     
 # Word Clouds
 def get_single_word_cloud(df):
+    '''
+    Displays a word cloud for the top twenty reoccuring words in each language
+    '''
     all_cloud = WordCloud(background_color='gainsboro', height=400, width=1300).generate(' '.join(get_all_words(df)))
     python_cloud = WordCloud(background_color='bisque', height=225, width=500).generate(' '.join(get_python_words(df)))
     js_cloud = WordCloud(background_color='mistyrose', height=225, width=500).generate(' '.join(get_js_words(df)))
@@ -155,6 +161,9 @@ def get_single_word_cloud(df):
 
 # Bigrams
 def top_twenty_bigrams(df):
+    '''
+    Returns dataframe of bigram counts for each language
+    '''
     # twenty most frequent bigrams for all words
     top_20_all_bigrams = (pd.Series(nltk.ngrams(get_all_words(df), 2))
                     .value_counts()
@@ -175,19 +184,20 @@ def top_twenty_bigrams(df):
     top_20_python_bigrams = (pd.Series(nltk.ngrams(get_python_words(df), 2))
                     .value_counts()
                     .head(20))
+    
     return (pd.concat([top_20_all_bigrams, top_20_js_bigrams, top_20_java_bigrams, 
                                      top_20_php_bigrams, top_20_python_bigrams], axis=1, sort=True)
-        .set_axis(['all','JavaScript', 'Java', 'PHP', 'Python'], axis=1, inplace=False)
+        .set_axis(['all_bigram','JavaScript', 'Java', 'PHP', 'Python'], axis=1, inplace=False)
         .fillna(0)
         .apply(lambda s: s.astype(int)))
-
+       
 def viz_top_bigram(bigram_word_counts):
     (bigram_word_counts
-         .assign(JavaScript=bigram_word_counts.JavaScript / bigram_word_counts['all'],
-                 PHP=bigram_word_counts.PHP / bigram_word_counts['all'],
-                 Python=bigram_word_counts.Python / bigram_word_counts['all'],
-                 Java=bigram_word_counts.Java / bigram_word_counts['all'])
-         .sort_values(by=['all'])
+         .assign(JavaScript=bigram_word_counts.JavaScript / bigram_word_counts['all_bigram'],
+                 PHP=bigram_word_counts.PHP / bigram_word_counts['all_bigram'],
+                 Python=bigram_word_counts.Python / bigram_word_counts['all_bigram'],
+                 Java=bigram_word_counts.Java / bigram_word_counts['all_bigram'])
+         .sort_values(by=['all_bigram'])
          [['JavaScript','PHP', 'Python','Java']]
          .tail(20)
          .sort_values(by='JavaScript')
@@ -196,46 +206,66 @@ def viz_top_bigram(bigram_word_counts):
     plt.title('Bigram Proportion of JavaScript vs PHP vs Python vs Java for the 20 most common words')
     
 
-## Still working on this 
-# def get_bigram_word_cloud(bigram_word_counts):
-#     all_bigram = {k[1] + ' ' + k[2]: v for k, v in bigram_word_counts['all'].to_dict().items()}
-#     java_bigram = {k[1] + ' ' + k[2]: v for k, v in bigram_word_counts['Java'].to_dict().items()}
-#     js_bigram = {k[1] + ' ' + k[2]: v for k, v in bigram_word_counts['JavaScript'].to_dict().items()}
-#     php_bigram = {k[1] + ' ' + k[2]: v for k, v in bigram_word_counts['PHP'].to_dict().items()}
-#     python_bigram = {k[1] + ' ' + k[2]: v for k, v in bigram_word_counts['Python'].to_dict().items()}
-    
-#     all_words_bigram_cloud = WordCloud(background_color='gainsboro', 
-#                                        height=400, width=1300).generate_from_frequencies(all_bigram)
-#     java_bigram_cloud = WordCloud(background_color='thistle', 
-#                               height=225, width=500).generate_from_frequencies(java_bigram)
-#     js_bigram_cloud = WordCloud(background_color='mistyrose', 
-#                             height=225, width=500).generate_from_frequencies(js_bigram)
-#     php_bigram_cloud = WordCloud(background_color='lightskyblue', 
-#                              height=225, width=500).generate_from_frequencies(php_bigram)
-#     python_bigram_cloud = WordCloud(background_color='bisque', 
-#                                 height=225, width=500).generate_from_frequencies(python_bigram)
 
-
-#     plt.figure(figsize=(12, 10))
+def get_bigram_word_cloud(df):
+    '''
+    Displays the top 20 most reoccuring bigrams for each language 
+    '''
+    # twenty most frequent bigrams for all words
+    top_20_all_bigrams = (pd.Series(nltk.ngrams(get_all_words(df), 2))
+                    .value_counts()
+                    .head(20))
+    # twenty most frequent bigrams for javascript
+    top_20_js_bigrams = (pd.Series(nltk.ngrams(get_js_words(df), 2))
+                    .value_counts()
+                    .head(20))
+    # twenty most frequent bigrams for java
+    top_20_java_bigrams = (pd.Series(nltk.ngrams(get_java_words(df), 2))
+                    .value_counts()
+                    .head(20))
+    # twenty most frequent bigrams for php
+    top_20_php_bigrams = (pd.Series(nltk.ngrams(get_php_words(df), 2))
+                    .value_counts()
+                    .head(20))
+    # twenty most frequent bigrams for python
+    top_20_python_bigrams = (pd.Series(nltk.ngrams(get_python_words(df), 2))
+                    .value_counts()
+                    .head(20))
     
-#     axs = [plt.axes([0, 2/3, 1, 1/3]) , plt.axes([0, 1/3, .50, 1/3]), plt.axes([.5, 1/3, .50, 1/3]), 
-#            plt.axes([0, 0, .5, 1/3]), plt.axes([.5, 0, .5, 1/3])]
+    all_bigram = {k[0] + ' ' + k[1]: v for k, v in top_20_all_bigrams.to_dict().items()}
+    java_bigram = {k[0] + ' ' + k[1]: v for k, v in top_20_java_bigrams.to_dict().items()}
+    js_bigram = {k[0] + ' ' + k[1]: v for k, v in top_20_js_bigrams.to_dict().items()}
+    php_bigram = {k[0] + ' ' + k[1]: v for k, v in top_20_php_bigrams.to_dict().items()}
+    python_bigram = {k[0] + ' ' + k[1]: v for k, v in top_20_python_bigrams.to_dict().items()}
     
-#     axs[0].imshow(all_words_bigram_cloud)
-#     axs[1].imshow(java_bigram_cloud)
-#     axs[2].imshow(js_bigram_cloud)
-#     axs[3].imshow(php_bigram_cloud)
-#     axs[4].imshow(python_bigram_cloud)
     
-#     axs[0].set_title('All Bigram Words')
-#     axs[1].set_title('Java')
-#     axs[2].set_title('JavaScript')
-#     axs[3].set_title('PHP')
-#     axs[4].set_title('Python')
+    
+    
+    all_words_bigram_cloud = WordCloud(background_color='gainsboro', height=400, width=1300).generate(' '.join(all_bigram))
+    java_bigram_cloud = WordCloud(background_color='thistle', height=225, width=500).generate(' '.join(java_bigram))
+    js_bigram_cloud = WordCloud(background_color='mistyrose', height=225, width=500).generate(' '.join(js_bigram))
+    php_bigram_cloud = WordCloud(background_color='lightskyblue', height=225, width=500).generate(' '.join(php_bigram))
+    python_bigram_cloud = WordCloud(background_color='bisque', height=225, width=500).generate(' '.join(python_bigram))
 
+    plt.figure(figsize=(12, 10))
+    
+    axs = [plt.axes([0, 2/3, 1, 1/3]) , plt.axes([0, 1/3, .50, 1/3]), plt.axes([.5, 1/3, .50, 1/3]), 
+           plt.axes([0, 0, .5, 1/3]), plt.axes([.5, 0, .5, 1/3])]
+    
+    axs[0].imshow(all_words_bigram_cloud)
+    axs[1].imshow(java_bigram_cloud)
+    axs[2].imshow(js_bigram_cloud)
+    axs[3].imshow(php_bigram_cloud)
+    axs[4].imshow(python_bigram_cloud)
+    
+    axs[0].set_title('All Bigram Words')
+    axs[1].set_title('Java')
+    axs[2].set_title('JavaScript')
+    axs[3].set_title('PHP')
+    axs[4].set_title('Python')
 
-#     for ax in axs:
-#         ax.axis('off')
+    for ax in axs:
+        ax.axis('off')
 
 
 ##########################################################
