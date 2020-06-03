@@ -67,5 +67,4 @@ def prepare_readme_data(df, column):
 
 def wrangle_data():
     data = pd.read_json('data.json')
-    data = data.dropna()
     return prepare_readme_data(data, 'readme_contents')
