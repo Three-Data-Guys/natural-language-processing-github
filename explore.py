@@ -55,5 +55,38 @@ def feature_engineering(df):
 
     return df
 
+def language_series(df):
+    """makes df with words and frequency of words for each programming language"""
+    
+    all_words = (' '.join(df.lemmatized))
+    all_words = re.sub(r'[^\w\s]', '', all_words).split()
+    all_freq = pd.Series(all_words).value_counts()
+    
+    php_words = (' '.join(df[df.language == 'PHP'].lemmatized))
+    php_words = re.sub(r'[^\w\s]', '', php_words).split()
+    php_freq = pd.Series(php_words).value_counts()
+    
+    python_words = (' '.join(df[df.language == 'Python'].lemmatized))
+    python_words = re.sub(r'[^\w\s]', '', python_words).split()
+    python_freq = pd.Series(python_words).value_counts()
+    
+    java_words = (' '.join(df[df.language == 'Java'].lemmatized))
+    java_words = re.sub(r'[^\w\s]', '', java_words).split()
+    java_freq = pd.Series(java_words).value_counts()
+    
+    js_words = (' '.join(df[df.language == 'JavaScript'].lemmatized))
+    js_words = re.sub(r'[^\w\s]', '', js_words).split()
+    js_freq = pd.Series(js_words).value_counts()
+    
+    freq_df = pd.DataFrame({'all': all_freq,
+                       'php': php_freq,
+                       'python': python_freq,
+                       'java': java_freq,
+                       'java_script': js_freq
+                        })
+    freq_df = freq_df.fillna(0)
+    
+    return freq_df
+
 
 ####### DAVID ##########
