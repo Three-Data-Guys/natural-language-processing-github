@@ -1,10 +1,8 @@
 # Natural Language Processing of Github README
 
-## Predict GitHub repository programming lanuages through Machine Learning NLP
+### Predict GitHub repository programming lanuages through Machine Learning NLP
 
 ## Description
-
----
 
 ## Specification
 
@@ -14,11 +12,7 @@
 
 ## Data Dictionary
 
----
-
 ## How to Reproduce
-
----
 
 ### First clone this repo
 
