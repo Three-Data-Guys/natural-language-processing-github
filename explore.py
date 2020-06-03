@@ -10,6 +10,7 @@ import nltk
 
 import re
 
+df = prepare.wrangle_data()
 
 def make_word_list(df):
     """ creates a list of every not unique word in dataframe"""
