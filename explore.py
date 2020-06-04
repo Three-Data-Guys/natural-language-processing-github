@@ -241,11 +241,11 @@ def get_bigram_word_cloud(df):
     
     
     
-    all_words_bigram_cloud = WordCloud(background_color='gainsboro', height=400, width=1300).generate(' '.join(all_bigram))
-    java_bigram_cloud = WordCloud(background_color='thistle', height=225, width=500).generate(' '.join(java_bigram))
-    js_bigram_cloud = WordCloud(background_color='mistyrose', height=225, width=500).generate(' '.join(js_bigram))
-    php_bigram_cloud = WordCloud(background_color='lightskyblue', height=225, width=500).generate(' '.join(php_bigram))
-    python_bigram_cloud = WordCloud(background_color='bisque', height=225, width=500).generate(' '.join(python_bigram))
+    all_words_bigram_cloud = WordCloud(background_color='gainsboro', height=400, width=1300).generate_from_frequencies(all_bigram)
+    java_bigram_cloud = WordCloud(background_color='thistle', height=225, width=500).generate_from_frequencies(java_bigram)
+    js_bigram_cloud = WordCloud(background_color='mistyrose', height=225, width=500).generate_from_frequencies(js_bigram)
+    php_bigram_cloud = WordCloud(background_color='lightskyblue', height=225, width=500).generate_from_frequencies(php_bigram)
+    python_bigram_cloud = WordCloud(background_color='bisque', height=225, width=500).generate_from_frequencies(python_bigram)
 
     plt.figure(figsize=(12, 10))
     
