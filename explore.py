@@ -12,14 +12,29 @@ import re
 
 from wordcloud import WordCloud
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.metrics import classification_report
+from sklearn import tree
+
 df = prepare.wrangle_data()
+
+import explore
+import prepare
+import handle_outliers
+import preprocessing
 
 #### idf viz #######
 
 col = df.lemmatized
 
 def make_sparse_matrix(col, n=15):
-
+    freq_df = preprocessing.language_series(df)
+    
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.feature_extraction.text import CountVectorizer
     cv = CountVectorizer()
     X = cv.fit_transform(col)
 
@@ -32,37 +47,6 @@ def make_sparse_matrix(col, n=15):
     df_of_words = df_of_words_tfidf[sparse_mask]
     
     return df_of_words
-
-def make_idf_list():
-    col_list = list(df_of_words.columns)
-    idf_list = []
-    for l in col_list:
-        x = df_of_words[l].apply(lambda x: x > 0).sum()
-        idf_list.append(x)
-    return idf_list
-
-def make_viz_df():
-    idf_df = pd.DataFrame({'word': col_list,
-                    'appearances': idf_list,  
-                      })
-    idf_df['idf'] = np.log(800 / idf_df.appearances)
-    return idf_df
-
-def make_idf_viz():
-    
-    col = df.lemmatized
-    df_of_words = make_sparse_matrix(col, n=15)
-    
-    idf_list = make_idf_list()
-    
-    idf_df = make_viz_df()
-    
-    sns.barplot(x=idf_df.word, y=idf_df.idf)
-    plt.xlabel("")
-    plt.ylabel("")
-    plt.xticks(rotation='vertical')
-    plt.title('IDF for a Given Word')
-    plt.show()
 
 
 
